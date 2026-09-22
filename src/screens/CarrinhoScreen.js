@@ -16,6 +16,7 @@ export default function CarrinhoScreen({
   onAdicionar,
   onRemover,
   onVoltar,
+  onContinuar,
 }) {
 
   const TAXA_ENTREGA = 6.0;
@@ -160,6 +161,7 @@ export default function CarrinhoScreen({
           <TouchableOpacity
             style={styles.btnContinuar}
             activeOpacity={0.7}
+            onPress={onContinuar}
           >
             <Text style={styles.btnContinuarText}>
               Continuar
