@@ -3,12 +3,17 @@ import React, { useState } from 'react';
 import CardapioScreen from '../src/screens/CardapioScreen';
 import CarrinhoScreen from '../src/screens/CarrinhoScreen';
 import CheckoutScreen from '../src/screens/CheckoutScreen';
+import ConfirmacaoScreen from '../src/screens/ConfirmacaoScreen';
 
 export default function Page() {
   const [carrinho, setCarrinho] = useState<any[]>([]);
 
   const [telaAtual, setTelaAtual] =
-    useState<'CARDAPIO' | 'CARRINHO' | 'CHECKOUT'>('CARDAPIO');
+    useState<
+      'CARDAPIO' | 'CARRINHO' | 'CHECKOUT' | 'CONFIRMACAO'
+    >('CARDAPIO');
+
+  const [dadosPedido, setDadosPedido] = useState<any>(null);
 
   const handleAdicionarProduto = (produto: any) => {
     setCarrinho((itensAnteriores) => {
@@ -61,7 +66,16 @@ export default function Page() {
   const handleFinalizarPedido = (dados: any) => {
     console.log('Dados do pedido:', dados);
     console.log('Carrinho:', carrinho);
+
+    setDadosPedido(dados);
+    setTelaAtual('CONFIRMACAO');
   };
+
+  const total = carrinho.reduce(
+    (soma, item) =>
+      soma + item.preco * item.quantidade,
+    0
+  );
 
   return (
     <>
@@ -86,6 +100,22 @@ export default function Page() {
         <CheckoutScreen
           onVoltar={() => setTelaAtual('CARRINHO')}
           onFinalizar={handleFinalizarPedido}
+        />
+      )}
+
+      {telaAtual === 'CONFIRMACAO' && dadosPedido && (
+        <ConfirmacaoScreen
+          carrinho={carrinho}
+          total={total}
+          endereco={dadosPedido.endereco}
+          formaPagamento={dadosPedido.pagamento}
+          precisoDeTroco={dadosPedido.precisoDeTroco}
+          trocoPara={dadosPedido.trocoPara}
+          onNovoPedido={() => {
+            setCarrinho([]);
+            setDadosPedido(null);
+            setTelaAtual('CARDAPIO');
+          }}
         />
       )}
     </>
